@@ -24,7 +24,7 @@ This project outlines the basic steps of an RNA-Seq experiment using nf-core/rna
 - Execute the nf-core/rnaseq pipeline with your samplesheet and raw data.
 - Example command:
   ```bash
-  nextflow run nf-core/rnaseq -profile "cluster-profile",docker --input samplesheet.csv --outdir results
+  nextflow run nf-core/rnaseq -r 3.18.0 -name microbiome_probiotics_RNASeq -profile "cluster-profile",singularity -params-file nf-params.json
   ```
 
 ### 4. Quality Control
