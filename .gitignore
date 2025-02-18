@@ -2,3 +2,5 @@ input_fq
 .vscode
 bmk
 delivery*
+Pver_ref/*.gz
+*.binac
