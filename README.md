@@ -14,6 +14,11 @@ This project outlines the basic steps of an RNA-Seq experiment using nf-core/rna
 ### 2. Prepare Input Data
 - Organize your raw sequencing data (FASTQ files).
 - Create a samplesheet CSV file with metadata about your samples.
+- Example command:
+  ```bash
+  echo "sample,fastq_1,fastq_2,strandedness" > ../samplesheet_quick.csv
+  for i in *_1.fq.gz ; do echo $(basename $i | sed 's/KAUST_//g' | sed 's/_1.fq.gz//g'),$(readlink -f $i),$(readlink -f $i | sed 's/_1./._2./g'),auto >> ../samplesheet_quick.csv; done
+  ```
 
 ### 3. Run nf-core/rnaseq Pipeline
 - Execute the nf-core/rnaseq pipeline with your samplesheet and raw data.
