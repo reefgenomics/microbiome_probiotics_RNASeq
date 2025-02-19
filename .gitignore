@@ -8,3 +8,4 @@ Pver_ref/*.gz
 results/*
 !results/README.md
 work/*
+!work/README.md
