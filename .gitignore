@@ -1,6 +1,10 @@
-input_fq
+input_fq/*.gz
+.nextflow*
 .vscode
 bmk
 delivery*
 Pver_ref/*.gz
 *.binac
+results/*
+!results/README.md
+work/*
