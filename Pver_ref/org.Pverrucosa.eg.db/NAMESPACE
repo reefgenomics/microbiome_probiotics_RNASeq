@@ -1,0 +1,16 @@
+import(methods)
+import(AnnotationDbi)
+
+### Only put what is statically exported here. All the AnnObj instances
+### created at load time are dynamically exported (refer to R/zzz.R for
+### the details).
+export(
+    org.Pverrucosa.eg,
+    org.Pverrucosa.eg_dbconn,
+    org.Pverrucosa.eg_dbfile,
+    org.Pverrucosa.eg_dbschema,
+    org.Pverrucosa.eg_dbInfo,
+
+    org.Pverrucosa.egORGANISM
+)
+
