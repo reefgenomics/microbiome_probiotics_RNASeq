@@ -4,7 +4,7 @@
     "email": "luigi.colin@uni-konstanz.de",
     "multiqc_title": "microbiome_probiotics_RNASeq",
     "fasta": "\/home\/colinl\/Proj\/microbiome_probiotics_RNASeq\/Pver_ref\/download\/ncbi_dataset\/data\/GCF_036669915.1\/GCF_036669915.1_ASM3666991v2_genomic.fna.gz",
-    "gtf": "\/home\/colinl\/Proj\/microbiome_probiotics_RNASeq\/Pver_ref\/download\/ncbi_dataset\/data\/GCF_036669915.1\/genomic.simple.gtf",
+    "gtf": "\/home\/colinl\/Proj\/microbiome_probiotics_RNASeq\/Pver_ref\/download\/ncbi_dataset\/data\/GCF_036669915.1\/genomic.simple.gtf.gz",
     "trimmer": "fastp",
     "pseudo_aligner": "salmon"
 }
