@@ -1,12 +1,13 @@
 
 ![Header Image](https://github.com/nf-core/rnaseq/raw/3.18.0/docs/images/nf-core-rnaseq_logo_light.png)
+
 # nf-core/rnaseq pipeline results
 
 this folder will contain the results of the nf-core/rnaseq pipeline and the output form the DEG analysis see: [DESeq2 README.md](Rscripts/README.md)
 ****
 Expected output:
 
-```
+```text
 ├── deseq2_R
 │   ├── plots
 │   ├── summary

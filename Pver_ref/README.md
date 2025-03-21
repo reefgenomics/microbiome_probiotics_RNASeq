@@ -53,8 +53,7 @@ pigz *.gtf *.gff *.fna
 ```
 
 <details>
-<summary>Other refernce needed for Rscripts</summary>
-
+<summary>Other reference needed for Rscripts</summary>
 
 ### Make DB from NCBI for Gene ID for 203993
 
@@ -72,6 +71,7 @@ makeOrgPackageFromNCBI(version = "0.1",
 
 install.packages("/home/colinl/Proj/microbiome_probiotics_RNASeq/Pver_ref/org.Pverrucosa.eg.db", repos = NULL) 
 ```
+
 Generated db files here: [org.Pverrucosa.eg.db](Pver_ref/org.Pverrucosa.eg.db.tar.gz)
 
 ### Bash Command to Extract Gene Info from NCBI
