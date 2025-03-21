@@ -6,7 +6,7 @@ delivery*
 Pver_ref/*
 !Pver_ref/README.md
 !Pver_ref/GTF_simplify.py
-!Pver_ref/org.Pverrucosa.eg.db 
+!Pver_ref/org.Pverrucosa.eg.db.tar.gz
 *.binac
 results/*
 !results/README.md
