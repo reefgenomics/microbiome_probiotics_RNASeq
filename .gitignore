@@ -3,9 +3,13 @@ input_fq/*.gz
 .vscode
 bmk
 delivery*
-Pver_ref/*.gz
+Pver_ref/*
+!Pver_ref/README.md
+!Pver_ref/GTF_simplify.py
+!Pver_ref/org.Pverrucosa.eg.db 
 *.binac
 results/*
 !results/README.md
 work/*
 !work/README.md
+results_backup.tar.gz
