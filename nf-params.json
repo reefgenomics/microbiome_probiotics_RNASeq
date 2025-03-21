@@ -3,8 +3,8 @@
     "outdir": "results",
     "email": "luigi.colin@uni-konstanz.de",
     "multiqc_title": "microbiome_probiotics_RNASeq",
-    "fasta": "\/home\/colinl\/Proj\/microbiome_probiotics_RNASeq\/Pver_ref\/Pver_genome_assembly_v1.0.fasta.gz",
-    "gtf": "\/home\/colinl\/Proj\/microbiome_probiotics_RNASeq\/Pver_ref\/Pver_genome_assembly_v1.0.gtf.gz",
+    "fasta": "\/home\/colinl\/Proj\/microbiome_probiotics_RNASeq\/Pver_ref\/download\/ncbi_dataset\/data\/GCF_036669915.1\/GCF_036669915.1_ASM3666991v2_genomic.fna.gz",
+    "gtf": "\/home\/colinl\/Proj\/microbiome_probiotics_RNASeq\/Pver_ref\/download\/ncbi_dataset\/data\/GCF_036669915.1\/genomic.simple.gtf",
     "trimmer": "fastp",
     "pseudo_aligner": "salmon"
 }
