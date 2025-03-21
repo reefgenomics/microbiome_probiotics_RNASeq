@@ -1,4 +1,5 @@
-input_fq/*.gz
+input_fq/*
+!input_fq/README.md
 .nextflow*
 .vscode
 bmk
