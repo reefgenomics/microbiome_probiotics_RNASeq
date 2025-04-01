@@ -16,7 +16,8 @@ out_dir <- "/home/colinl/Proj/microbiome_probiotics_RNASeq/results/deseq2_R"
 # Create output directory if it doesn't exist
 if (!dir.exists(out_dir)) {
         dir.create(paste(out_dir,"dds_objects", sep = "/"), recursive = TRUE)
-        dir.create(paste(out_dir,"summary", sep = "/"), recursive = TRUE)
+        dir.create(paste(out_dir,"summary", "DEcounts", sep = "/"), recursive = TRUE)
+        dir.create(paste(out_dir,"summary", "DEgenes", sep = "/"), recursive = TRUE)
 }
 
 # Preparing count data from nf-core/rnaseq pipeline star_salmon output.
@@ -121,7 +122,7 @@ echo_message("Comparison 0 - All samples", C0_res)
 export_echo_message("Comparison 0 - All samples", "DESeq_summary_info.txt", C0_res)
 
 # #write results to table
-write.table(C0_fin, paste(out_dir, "/DESeq_Comparison-ALL.tsv", sep = ""), row.names = F, quote = F, sep = "\t")
+write.table(C0_fin, paste(out_dir, "/summary/DEgenes/DESeq_Comparison-ALL.tsv", sep = ""), row.names = F, quote = F, sep = "\t")
 
 
 ###––– Other comparisons, same logic as above but within loops –––### 
@@ -132,6 +133,7 @@ for (i in c(0,1,2)) {
         sampleTable <- subset(metadata, rownames(metadata) %like% paste("2024_Pver_[CV][PCDL]_T",i,"_0[0-9]_0[1-9]", sep = "" ))
 
         comp_title <- paste("Comparison T", i, " all samples", sep = "")
+        comp_short_title <- paste("T", i, "-ALL_TREATMENTS", sep = "")
         Cn <- DESeqDataSetFromMatrix(countData = countData, colData =  sampleTable, design = colony ~ treatment) 
         Cn$treatment <- relevel(Cn$treatment, ref = "CC")
         Cn <- DESeq(Cn)
@@ -148,11 +150,11 @@ for (i in c(0,1,2)) {
                 summary_dds_df <- dds_counts_to_df(comp_title, Cn_res)
         }
         # write summary to file
-        write.table(summary_dds_df, paste(out_dir, "/summary/DESeq_summary_timepoint", ".tsv", sep = ""), row.names = F, quote = F, sep = "\t")
+        write.table(summary_dds_df, paste(out_dir, "/summary/DEcounts/DESeq_summary_timepoint", ".tsv", sep = ""), row.names = F, quote = F, sep = "\t")
         # save DESeq(Cn) object to file # deactivate by default. Activate if re-running the DESeq() function becomes too slow
-        saveRDS(Cn, paste(out_dir, "/dds_objects/DESeq_data_T",i,".rds", sep = ""))
+        saveRDS(Cn, paste(out_dir, "/dds_objects/DESeq_data_",comp_short_title,".rds", sep = ""))
         export_echo_message(comp_title, "DESeq_timepoints_summary_info.txt", Cn_res)
-        write.table(Cn_fin, paste(out_dir, "/DESeq_Comparison-", comp_title, ".tsv", sep = ""), row.names = F, quote = F, sep = "\t")
+        write.table(Cn_fin, paste(out_dir, "/summary/DEgenes/DESeq_Comparison-", comp_short_title, ".tsv", sep = ""), row.names = F, quote = F, sep = "\t")
 }
 
 # loop through all timpoints and treatment again CC. (CC vs CP , VD, VL) for T0,1,2.
@@ -163,6 +165,7 @@ for (j in c(0:2)) {
                 sampleTable <- subset(metadata, rownames(metadata) %like% paste("2024_Pver_CC_T",j,"_0[0-9]_0[1-9]|2024_Pver_",i,"_T",j,"_0[0-9]_0[1-9]", sep = ""))
 
                 comp_title <- paste("Comparison CC vs ",i," for T",j, sep = "")
+                comp_short_title <- paste("CCv",i,"-T", j, sep = "")
                 Cn <- DESeqDataSetFromMatrix(countData = countData, colData =  sampleTable, design = colony ~ treatment) 
                 Cn$treatment <- relevel(Cn$treatment, ref = "CC")
                 Cn <- DESeq(Cn)
@@ -180,11 +183,11 @@ for (j in c(0:2)) {
                 }
 
                 # write summary to file
-                write.table(summary_dds_df, paste(out_dir, "/summary/DESeq_summary_Treatment", ".tsv", sep = ""), row.names = F, quote = F, sep = "\t")
+                write.table(summary_dds_df, paste(out_dir, "/summary/DEcounts/DESeq_summary_Treatment", ".tsv", sep = ""), row.names = F, quote = F, sep = "\t")
                 # save DESeq(Cn) object to file # deactivate by default. Activate if re-running the DESeq() function becomes too slow
-                saveRDS(Cn, paste(out_dir, "/dds_objects/DESeq_data_CCvs",i,"_T",j,".rds", sep = ""))
+                saveRDS(Cn, paste(out_dir, "/dds_objects/DESeq_data_",comp_short_title,".rds", sep = ""))
                 export_echo_message(comp_title, "DESeq_individual_comp_summary_info.txt", Cn_res)
-                write.table(Cn_fin, paste(out_dir, "/DESeq_Comparison-", comp_title, ".tsv", sep = ""), row.names = F, quote = F, sep = "\t")
+                write.table(Cn_fin, paste(out_dir, "/summary/DEgenes/DESeq_Comparison-", comp_short_title, ".tsv", sep = ""), row.names = F, quote = F, sep = "\t")
         }
 }
 # loop through all timpoints and treatment against CP (CP vs VD, VL) for T0,1,2.
@@ -195,6 +198,7 @@ for (j in c(0:2)) {
                 sampleTable <- subset(metadata, rownames(metadata) %like% paste("2024_Pver_CP_T",j,"_0[0-9]_0[1-9]|2024_Pver_",i,"_T",j,"_0[0-9]_0[1-9]", sep = ""))
 
                 comp_title <- paste("Comparison CP vs ",i," for T",j, sep = "")
+                comp_short_title <- paste("CPv",i,"-T", j, sep = "")
                 Cn <- DESeqDataSetFromMatrix(countData = countData, colData =  sampleTable, design = colony ~ treatment) 
                 Cn$treatment <- relevel(Cn$treatment, ref = "CP")
                 Cn <- DESeq(Cn)
@@ -212,11 +216,11 @@ for (j in c(0:2)) {
                 }
 
                 # write summary to file
-                write.table(summary_dds_df, paste(out_dir, "/summary/DESeq_summary_Treatment", ".tsv", sep = ""), row.names = F, quote = F, sep = "\t")
+                write.table(summary_dds_df, paste(out_dir, "/summary/DEcounts/DESeq_summary_Treatment", ".tsv", sep = ""), row.names = F, quote = F, sep = "\t")
                 # save DESeq(Cn) object to file # deactivate by default. Activate if re-running the DESeq() function becomes too slow
-                saveRDS(Cn, paste(out_dir, "/dds_objects/DESeq_data_CPvs",i,"_T",j,".rds", sep = ""))
+                saveRDS(Cn, paste(out_dir, "/dds_objects/DESeq_data_",comp_short_title,".rds", sep = ""))
                 export_echo_message(comp_title, "DESeq_individual_comp_summary_info.txt", Cn_res)
-                write.table(Cn_fin, paste(out_dir, "/DESeq_Comparison-", comp_title, ".tsv", sep = ""), row.names = F, quote = F, sep = "\t")
+                write.table(Cn_fin, paste(out_dir, "/summary/DEgenes/DESeq_Comparison-", comp_short_title, ".tsv", sep = ""), row.names = F, quote = F, sep = "\t")
         }
 }
 
@@ -228,6 +232,7 @@ for (j in c(0:2)) {
                 sampleTable <- subset(metadata, rownames(metadata) %like% paste("2024_Pver_VD_T",j,"_0[0-9]_0[1-9]|2024_Pver_",i,"_T",j,"_0[0-9]_0[1-9]", sep = ""))
 
                 comp_title <- paste("Comparison VD vs ",i," for T",j, sep = "")
+                comp_short_title <- paste("VDv",i,"-T", j, sep = "")
                 Cn <- DESeqDataSetFromMatrix(countData = countData, colData =  sampleTable, design = colony ~ treatment) 
                 Cn$treatment <- relevel(Cn$treatment, ref = "VD")
                 Cn <- DESeq(Cn)
@@ -245,11 +250,11 @@ for (j in c(0:2)) {
                 }
 
                 # write summary to file
-                write.table(summary_dds_df, paste(out_dir, "/summary/DESeq_summary_Treatment", ".tsv", sep = ""), row.names = F, quote = F, sep = "\t")
+                write.table(summary_dds_df, paste(out_dir, "/summary/DEcounts/DESeq_summary_Treatment", ".tsv", sep = ""), row.names = F, quote = F, sep = "\t")
                 # save DESeq(Cn) object to file # deactivate by default. Activate if re-running the DESeq() function becomes too slow
-                saveRDS(Cn, paste(out_dir, "/dds_objects/DESeq_data_VDvs",i,"_T",j,".rds", sep = ""))
+                saveRDS(Cn, paste(out_dir, "/dds_objects/DESeq_data_",comp_short_title,".rds", sep = ""))
                 export_echo_message(comp_title, "DESeq_individual_comp_summary_info.txt", Cn_res)
-                write.table(Cn_fin, paste(out_dir, "/DESeq_Comparison-", comp_title, ".tsv", sep = ""), row.names = F, quote = F, sep = "\t")
+                write.table(Cn_fin, paste(out_dir, "/summary/DEgenes/DESeq_Comparison-", comp_short_title, ".tsv", sep = ""), row.names = F, quote = F, sep = "\t")
         }
 }
 
@@ -261,6 +266,7 @@ for (i in c("CC", "CP", "VD", "VL")) {
         sampleTable <- subset(metadata, rownames(metadata) %like% paste("2024_Pver_",i,"_T[0-2]_0[0-9]_0[1-9]", sep = ""))
 
         comp_title <- paste("Comparison for ", i," at T0-1-2", sep = "")
+        comp_short_title <- paste(i,"_T0-1-2", sep = "")
         Cn <- DESeqDataSetFromMatrix(countData = countData, colData =  sampleTable, design = ~ timepoint) 
         # Cn$treatment <- relevel(Cn$treatment, ref = "VD")
         Cn <- DESeq(Cn)
@@ -278,11 +284,12 @@ for (i in c("CC", "CP", "VD", "VL")) {
         }
 
         # write summary to file
-        write.table(summary_dds_df, paste(out_dir, "/summary/DESeq_summary_Time", ".tsv", sep = ""), row.names = F, quote = F, sep = "\t")
+        write.table(summary_dds_df, paste(out_dir, "/summary/DEcounts/DESeq_summary_Time", ".tsv", sep = ""), row.names = F, quote = F, sep = "\t")
         # save DESeq(Cn) object to file # deactivate by default. Activate if re-running the DESeq() function becomes too slow
-        saveRDS(Cn, paste(out_dir, "/dds_objects/DESeq_data_",i,".rds", sep = ""))
+        saveRDS(Cn, paste(out_dir, "/dds_objects/DESeq_data_",comp_short_title,".rds", sep = ""))
         export_echo_message(comp_title, "DESeq_individual_comp_summary_info.txt", Cn_res)
-        write.table(Cn_fin, paste(out_dir, "/DESeq_Comparison-", comp_title, ".tsv", sep = ""), row.names = F, quote = F, sep = "\t")
+        write.table(Cn_fin, paste(out_dir, "/summary/DEgenes/DESeq_Comparison-", comp_short_title, ".tsv", sep = ""), row.names = F, quote = F, sep = "\t")
+
 }
 
 
@@ -294,7 +301,8 @@ for (j in c("[0-2]")) {
                 countData <- (counts[,grepl(paste("2024_Pver_CC_T",j,"_0[0-9]_0[1-9]|2024_Pver_",i,"_T",j,"_0[0-9]_0[1-9]", sep = ""), colnames(counts))])
                 sampleTable <- subset(metadata, rownames(metadata) %like% paste("2024_Pver_CC_T",j,"_0[0-9]_0[1-9]|2024_Pver_",i,"_T",j,"_0[0-9]_0[1-9]", sep = ""))
 
-                comp_title <- paste("Comparison CP vs ",i," for T", gsub("\\[0-2\\]", "0-1-2", j), sep = "")
+                comp_title <- paste("Comparison CC vs ",i," for T", gsub("\\[0-2\\]", "0-1-2", j), sep = "")
+                comp_short_title <- paste("CCv",i,"_T", gsub("\\[0-2\\]", "0-1-2", j), sep = "")
                 Cn <- DESeqDataSetFromMatrix(countData = countData, colData =  sampleTable, design = colony ~ treatment) 
                 Cn$treatment <- relevel(Cn$treatment, ref = "CC")
                 Cn <- DESeq(Cn)
@@ -312,11 +320,12 @@ for (j in c("[0-2]")) {
                 }
 
                 # write summary to file
-                write.table(summary_dds_df, paste(out_dir, "/summary/DESeq_summary_treatm_combination_times", ".tsv", sep = ""), row.names = F, quote = F, sep = "\t")
+                write.table(summary_dds_df, paste(out_dir, "/summary/DEcounts/DESeq_summary_treatm_combination_times", ".tsv", sep = ""), row.names = F, quote = F, sep = "\t")
                 # save DESeq(Cn) object to file # deactivate by default. Activate if re-running the DESeq() function becomes too slow
-                saveRDS(Cn, paste(out_dir, "/dds_objects/DESeq_data_CCvs",i,"_T",j,".rds", sep = ""))
+                saveRDS(Cn, paste(out_dir, "/dds_objects/DESeq_data_",comp_short_title,".rds", sep = ""))
                 export_echo_message(comp_title, "DESeq_individual_comp_summary_info.txt", Cn_res)
-                write.table(Cn_fin, paste(out_dir, "/DESeq_Comparison-", comp_title, ".tsv", sep = ""), row.names = F, quote = F, sep = "\t")
+                write.table(Cn_fin, paste(out_dir, "/summary/DEgenes/DESeq_Comparison-", comp_short_title, ".tsv", sep = ""), row.names = F, quote = F, sep = "\t")
+
         }
 }
 # loop through all timpoints and treatment against CP (CP vs VD, VL) for T0,1,2.
@@ -327,6 +336,7 @@ for (j in c("[0-2]")) {
                 sampleTable <- subset(metadata, rownames(metadata) %like% paste("2024_Pver_CP_T",j,"_0[0-9]_0[1-9]|2024_Pver_",i,"_T",j,"_0[0-9]_0[1-9]", sep = ""))
 
                 comp_title <- paste("Comparison CP vs ",i," for T", gsub("\\[0-2\\]", "0-1-2", j), sep = "")
+                comp_short_title <- paste("CPv",i,"_T", gsub("\\[0-2\\]", "0-1-2", j), sep = "")
                 Cn <- DESeqDataSetFromMatrix(countData = countData, colData =  sampleTable, design = colony ~ treatment) 
                 Cn$treatment <- relevel(Cn$treatment, ref = "CP")
                 Cn <- DESeq(Cn)
@@ -344,11 +354,11 @@ for (j in c("[0-2]")) {
                 }
 
                 # write summary to file
-                write.table(summary_dds_df, paste(out_dir, "/summary/DESeq_summary_treatm_combination_times", ".tsv", sep = ""), row.names = F, quote = F, sep = "\t")
+                write.table(summary_dds_df, paste(out_dir, "/summary/DEcounts/DESeq_summary_treatm_combination_times", ".tsv", sep = ""), row.names = F, quote = F, sep = "\t")
                 # save DESeq(Cn) object to file # deactivate by default. Activate if re-running the DESeq() function becomes too slow
-                saveRDS(Cn, paste(out_dir, "/dds_objects/DESeq_data_CPvs",i,"_T",j,".rds", sep = ""))
+                saveRDS(Cn, paste(out_dir, "/dds_objects/DESeq_data_",comp_short_title,".rds", sep = ""))
                 export_echo_message(comp_title, "DESeq_individual_comp_summary_info.txt", Cn_res)
-                write.table(Cn_fin, paste(out_dir, "/DESeq_Comparison-", comp_title, ".tsv", sep = ""), row.names = F, quote = F, sep = "\t")
+                write.table(Cn_fin, paste(out_dir, "/summary/DEgenes/DESeq_Comparison-", comp_short_title, ".tsv", sep = ""), row.names = F, quote = F, sep = "\t")
         }
 }
 
@@ -359,7 +369,8 @@ for (j in c("[0-2]")) {
                 countData <- (counts[,grepl(paste("2024_Pver_VD_T",j,"_0[0-9]_0[1-9]|2024_Pver_",i,"_T",j,"_0[0-9]_0[1-9]", sep = ""), colnames(counts))])
                 sampleTable <- subset(metadata, rownames(metadata) %like% paste("2024_Pver_VD_T",j,"_0[0-9]_0[1-9]|2024_Pver_",i,"_T",j,"_0[0-9]_0[1-9]", sep = ""))
 
-                comp_title <- paste("Comparison CP vs ",i," for T", gsub("\\[0-2\\]", "0-1-2", j), sep = "")
+                comp_title <- paste("Comparison VD vs ",i," for T", gsub("\\[0-2\\]", "0-1-2", j), sep = "")
+                comp_short_title <- paste("VDv",i,"_T", gsub("\\[0-2\\]", "0-1-2", j), sep = "")
                 Cn <- DESeqDataSetFromMatrix(countData = countData, colData =  sampleTable, design = colony ~ treatment) 
                 Cn$treatment <- relevel(Cn$treatment, ref = "VD")
                 Cn <- DESeq(Cn)
@@ -377,10 +388,46 @@ for (j in c("[0-2]")) {
                 }
 
                 # write summary to file
-                write.table(summary_dds_df, paste(out_dir, "/summary/DESeq_summary_treatm_combination_times", ".tsv", sep = ""), row.names = F, quote = F, sep = "\t")
+                write.table(summary_dds_df, paste(out_dir, "/summary/DEcounts/DESeq_summary_treatm_combination_times", ".tsv", sep = ""), row.names = F, quote = F, sep = "\t")
                 # save DESeq(Cn) object to file # deactivate by default. Activate if re-running the DESeq() function becomes too slow
-                saveRDS(Cn, paste(out_dir, "/dds_objects/DESeq_data_VDvs",i,"_T",j,".rds", sep = ""))
+                saveRDS(Cn, paste(out_dir, "/dds_objects/DESeq_data_",comp_short_title,".rds", sep = ""))
                 export_echo_message(comp_title, "DESeq_individual_comp_summary_info.txt", Cn_res)
-                write.table(Cn_fin, paste(out_dir, "/DESeq_Comparison-", comp_title, ".tsv", sep = ""), row.names = F, quote = F, sep = "\t")
+                write.table(Cn_fin, paste(out_dir, "/summary/DEgenes/DESeq_Comparison-", comp_short_title, ".tsv", sep = ""), row.names = F, quote = F, sep = "\t")
         }
 }
+
+
+# # comparison made by this script
+# treatment	time
+# CC-CP	0
+# CC-VD	0
+# CC-VL	0
+# CP-VD	0
+# CP-VL	0
+# VD-VL	0
+# CC-CP	1
+# CC-VD	1 
+# CC-VL	1
+# CP-VD	1
+# CP-VL	1
+# VD-VL	1
+# CC-CP	2
+# CC-VD	2
+# CC-VL	2
+# CP-VD	2
+# CP-VL	2
+# VD-VL	2
+# CC-CP	0-1-2
+# CC-VD	0-1-2
+# CC-VL	0-1-2
+# CP-VD	0-1-2
+# CP-VL	0-1-2
+# VD-VL	0-1-2
+# CC	0-1-2
+# CP	0-1-2
+# CP	0-1-2
+# VD	0-1-2
+# CC-CP-VD-VL	0-1-2
+# CC-CP-VD-VL	0
+# CC-CP-VD-VL	1
+# CC-CP-VD-VL	2

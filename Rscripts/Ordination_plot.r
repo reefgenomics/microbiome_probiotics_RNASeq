@@ -4,6 +4,13 @@
 library(pacman)
 p_load(phyloseq, microbiome, httpgd, ggrepel, ggplot2, ggpubr, dplyr, readr)
 
+
+# # set output directory variable
+out_dir <- "/home/colinl/Proj/microbiome_probiotics_RNASeq/results/deseq2_R/Ordination_plot"
+# Create output directory if it doesn't exist
+if (!dir.exists(out_dir)) {
+        dir.create(paste(out_dir,"plot", "",  sep = "/"), recursive = TRUE)
+}
 # Load count data and preprocess
 cnt <- read.table("/home/colinl/Proj/microbiome_probiotics_RNASeq/results/star_salmon/salmon.merged.gene_counts.tsv", 
           header = TRUE, sep = "\t", row.names = 1)
@@ -125,12 +132,16 @@ ggarrange(plot_all,
       ncol = 1, nrow = 2, common.legend = TRUE, legend = "bottom")
 
 # Save the combined plots as a PDF
-pdf(file = "/home/colinl/Proj/microbiome_probiotics_RNASeq/results/deseq2_R/plots/ordination_plot.pdf", 
+pdf(file = paste0(out_dir,"/plots/ordination_plot.pdf"),
   width = 11, height = 8.5, pointsize = 6)
 
-ggarrange(plot_all,
-      ggarrange(plot_time_list[[1]], plot_time_list[[2]], plot_time_list[[3]],
-          ncol = 3, nrow = 1, common.legend = TRUE, legend = "none"),
-      ncol = 1, nrow = 2, common.legend = TRUE, legend = "bottom")
+  ggarrange(plot_all,
+        ggarrange(plot_time_list[[1]], plot_time_list[[2]], plot_time_list[[3]],
+            ncol = 3, nrow = 1, common.legend = TRUE, legend = "none"),
+        ncol = 1, nrow = 2, common.legend = TRUE, legend = "bottom")
+
+  ggarrange(plot_treatment_list[[1]], plot_treatment_list[[2]],
+        plot_treatment_list[[3]], plot_treatment_list[[4]],
+      ncol = 2, nrow = 2, common.legend = TRUE, legend = "bottom")
 
 dev.off()  # Close the PDF device

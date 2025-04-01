@@ -1,9 +1,7 @@
 
 library(pacman)
 p_load(clusterProfiler, AnnotationDbi, GenomicFeatures, AnnotationForge, org.Pverrucosa.eg.db, enrichplot, clusterProfiler, ggplot2, dplyr, tidyr, data.table, tximport, apeglm, topGO, deseq2)
-# p_load(org.Hs.eg.db) # Substitute with coral-specific DB if available
 library(org.Pverrucosa.eg.db) # See Pver_ref/README.md file for more info  # install.packages("/home/colinl/Proj/microbiome_probiotics_RNASeq/Pver_ref/org.Pverrucosa.eg.db", repos = NULL) 
-
 
 # # set output directory variable
 out_dir <- "/home/colinl/Proj/microbiome_probiotics_RNASeq/results/deseq2_R/GO_enrichment"
@@ -67,11 +65,11 @@ for (i in c(1:length(object_list))) {
     message(paste("ego_", comp_name, " made!", sep = ""))
     cat(paste("ego_", comp_name, " made!", "\n", sep = ""), file = paste0(out_dir, "/summary/GO_enrichment.log"), append = TRUE)
 
-      pdf(file = paste0(out_dir, "/plot/GO_enrichment_dotplot_", comp_name, ".pdf"))
+      pdf(file = paste0(out_dir, "/plot/dotplot/GO_enrichment_dotplot_", comp_name, ".pdf"))
       print(dotplot(ego_dds_n, showCategory = 20) + ggtitle(paste("GO Enrichment (", comp_name, ")", sep = "")))
       dev.off()
 
-      pdf(file = paste0(out_dir, "/plot/GO_enrichment_cnetplot_", comp_name, ".pdf"))
+      pdf(file = paste0(out_dir, "/plot/cnetplot/GO_enrichment_cnetplot_", comp_name, ".pdf"))
       print(cnetplot(ego_dds_n, showCategory = 20) + ggtitle(paste("GO Enrichment (", comp_name, ")", sep = "")))
       dev.off()
       write.table(as.data.frame(ego_dds_n), file = paste0(out_dir, "/summary/GO_enrichment_", comp_name, ".tsv"), sep = "\t", row.names = FALSE, quote = FALSE)
@@ -333,10 +331,8 @@ for (i in seq_along(object_list)) {
 # # Save Fisher test results
 for (comp_name in names(fisher_results)) {
   write.table(fisher_results[[comp_name]],
-              file = paste0(out_dir, "/summary/fisher/fisher_results_", comp_name,".tsv"), sep = "\t", row.names = FALSE, quote = FALSE)
+              file = paste0(out_dir, "/summary/fisher/fisher_results_", comp_name,".tsv"), sep = "\t", row.names = FALSE, quote = FALSE) # nolint: line_length_linter.
 }
-
-
 
 # counts <- read.table("/home/colinl/Proj/microbiome_probiotics_RNASeq/results/star_salmon/salmon.merged.gene_counts.tsv", header = TRUE, sep = "\t", row.names = 1)
 # universe <- data.frame(Gene = rownames(counts))
