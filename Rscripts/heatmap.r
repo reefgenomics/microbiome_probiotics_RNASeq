@@ -37,7 +37,7 @@ scaled_expr <- t(scale(t(filtered_expr)))
 # pdf("/home/colinl/Proj/microbiome_probiotics_RNASeq/heatmap_expressed_genes.pdf")
 
 # Save the heatmap to a PNG file
-png(paste0(out_dir,"/plot/heatmap_expressed_genes.png"), width = 2000, height = 1500, res = 600)
+png(paste0(out_dir,"/plot/heatmap_expressed_genes.png"), width = 2000, height = 1500, res = 300)
 pheatmap(scaled_expr,
         color = colorRampPalette(c("blue", "white", "red"))(100),
         clustering_distance_rows = "euclidean",
@@ -73,7 +73,7 @@ for (timepoint in timepoints) {
         # Store the subset in the list
         expr_matrices[[timepoint]] <- scaled_expr
         # Save the heatmap for each timepoint
-        png(paste0(out_dir,"/plot/heatmap_expressed_genes_timepoint_", timepoint, ".png"), width = 2000, height = 1500, res = 600)
+        png(paste0(out_dir,"/plot/heatmap_expressed_genes_timepoint_", timepoint, ".png"), width = 2000, height = 1500, res = 300)
         pheatmap(scaled_expr,
                 color = colorRampPalette(c("blue", "white", "red"))(100),
                 clustering_distance_rows = "euclidean",
@@ -86,5 +86,5 @@ for (timepoint in timepoints) {
 
 # save the scaled expression matrix for each timepoint
 for (timepoint in timepoints) {
-        write.table(expr_matrices[[timepoint]], file = paste0(out_dir,"/matrixes/scaled_expression_matrix_", timepoint, ".txt"), sep = "\t", quote = FALSE, col.names = NA)
+        write.table(expr_matrices[[timepoint]], file = paste0(out_dir, "/matrixes/scaled_expression_matrix_", timepoint, ".txt"), sep = "\t", quote = FALSE, col.names = NA)
 }

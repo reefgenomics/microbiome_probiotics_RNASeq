@@ -1,7 +1,20 @@
 
 library(pacman)
-p_load(clusterProfiler, AnnotationDbi, GenomicFeatures, AnnotationForge, org.Pverrucosa.eg.db, enrichplot, clusterProfiler, ggplot2, dplyr, tidyr, data.table, tximport, apeglm, topGO, deseq2)
-library(org.Pverrucosa.eg.db) # See Pver_ref/README.md file for more info  # install.packages("/home/colinl/Proj/microbiome_probiotics_RNASeq/Pver_ref/org.Pverrucosa.eg.db", repos = NULL) 
+p_load(clusterProfiler,
+      AnnotationDbi,
+      GenomicFeatures,
+      AnnotationForge,
+      org.Pverrucosa.eg.db, # See Pver_ref/README.md file for more info  # install.packages("path-to-ref/Pver_ref/org.Pverrucosa.eg.db", repos = NULL)
+      enrichplot,
+      clusterProfiler,
+      ggplot2,
+      dplyr,
+      tidyr,
+      data.table,
+      tximport,
+      apeglm,
+      topGO,
+      DESeq2)
 
 # # set output directory variable
 out_dir <- "/home/colinl/Proj/microbiome_probiotics_RNASeq/results/deseq2_R/GO_enrichment"
@@ -15,8 +28,8 @@ if (!dir.exists(out_dir)) {
 gff_file <- "/home/colinl/Proj/microbiome_probiotics_RNASeq/Pver_ref/genomic.simple.gtf.gz"
 
 txdb <- makeTxDbFromGFF(gff_file, format = "gtf")
-gene_map <- genes(txdb)
-valid_columns <- columns(txdb)
+gene_map <- GenomicFeatures::genes(txdb)
+# valid_columns <- columns(txdb)
 # print(valid_columns) # Check for valid column names
 gene_map$GENENAME <- mapIds(txdb, keys = gene_map$gene_id, 
                                             column = "GENEID", keytype = "GENEID", 
@@ -27,7 +40,7 @@ gene_map$gene_id <- sub("gene-", "", gene_map$gene_id)
 # load the dds objects
 object_list <- list.files(path = "/home/colinl/Proj/microbiome_probiotics_RNASeq/results/deseq2_R/dds_objects/", pattern = "*.rds", full.names = TRUE)
 
-httpgd::hgd()
+# httpgd::hgd()
 # Loop through each DESeq2 object and perform individual GO enrichment analysis
 for (i in c(1:length(object_list))) {
     comp_name <- gsub(".rds", "",gsub("DESeq_data_", "", basename(object_list[i])))
@@ -130,7 +143,7 @@ write.csv(as.data.frame(cc), file = paste0(out_dir, "/summary/GO_enrichment_resu
 # Save the compareCluster object
 
 ## other comparison to explore separately
-pdf(paste0(out_dir,"/plot/GO_enrichment_comparisons.pdf"), width = 8, height = 12)
+pdf(paste0(out_dir,"/plot/GO_enrichment_comparisons.pdf"), width = 8, height = 14)
 # [1] "T0-ALL_TREATMENTS"
 # [1] "T1-ALL_TREATMENTS"
 # [1] "T2-ALL_TREATMENTS"
@@ -160,7 +173,7 @@ dotplot(all_treatments, showCategory = 20, size = "FoldEnrichment") +
 all_times_gene_lists <- gene_lists[grep("^[CPV][CPLD]_T0-1-2$", names(gene_lists))]
 names(all_times_gene_lists)
 
-all_times<- compareCluster(
+all_times <- compareCluster(
     geneCluster = all_times_gene_lists,
     fun = "enrichGO",
     OrgDb = org.Pverrucosa.eg.db,
@@ -185,7 +198,7 @@ dotplot(all_times, showCategory = 20, size = "FoldEnrichment") +
 treatment_t0_gene_lists <- gene_lists[grep("^[CV][CPD]v[CV][PDL]-T0$", names(gene_lists))]
 names(treatment_t0_gene_lists)
 
-t0_t<- compareCluster(
+t0_t <- compareCluster(
     geneCluster = treatment_t0_gene_lists,
     fun = "enrichGO",
     OrgDb = org.Pverrucosa.eg.db,
@@ -334,79 +347,11 @@ for (comp_name in names(fisher_results)) {
               file = paste0(out_dir, "/summary/fisher/fisher_results_", comp_name,".tsv"), sep = "\t", row.names = FALSE, quote = FALSE) # nolint: line_length_linter.
 }
 
-# counts <- read.table("/home/colinl/Proj/microbiome_probiotics_RNASeq/results/star_salmon/salmon.merged.gene_counts.tsv", header = TRUE, sep = "\t", row.names = 1)
-# universe <- data.frame(Gene = rownames(counts))
-# # Read in annotation data from NCBI 
-# all_annotations <- read_tsv("/home/colinl/Proj/microbiome_probiotics_RNASeq/Pver_ref/NCBIFilesDir/203993.gene.tsv")
-# gene2GO <- read_tsv("/home/colinl/Proj/microbiome_probiotics_RNASeq/Pver_ref/NCBIFilesDir/gene2go.gz")
 
-# head(gene2GO)
-# # Filter gene2GO for taxid = 203993
-# gene2GO_filtered <- gene2GO %>% filter(`#tax_id` == 203993)
-
-# # Create a mapping of gene IDs to GO terms
-# geneID2GO <- split(gene2GO_filtered$GO_ID, gene2GO_filtered$GeneID)
-# # universe=data.frame(Gene=rownames(cnt))
-# # universe$Uniprot=sprot_annotations$V2[match(universe$Gene, sprot_annotations$V1)]
-# # universe$Uniprot=ifelse(is.na(universe$Uniprot), trembl_annotations$V2[match(universe$Gene, trembl_annotations$V1)], as.character(universe$Uniprot))
-# # universe$GO=unip_meta$Gene.ontology.IDs[match(universe$Uniprot, unip_meta$Entry)]
-# # is.na(universe$GO) <- universe$GO == ""
-# # universe_final=na.omit(universe[,-2])
-# # write.table(universe_final, "./Input_files/GO_universe", quote = F, row.names = F, sep = "\t")
-
-# geneList <- factor(as.integer(universe_all %in% gene_lists[[1]]))
-# geneList <- sub("LOC", "", names(geneList))
-# names(geneList) <- sub("LOC", "", universe_all)
-
-# myGOdata <- new("topGOdata", 
-#         description = "My project", 
-#         ontology = "BP", 
-#         allGenes = geneList, 
-#         annot = annFUN.gene2GO, 
-#         gene2GO = geneID2GO)
-
-# resultFisher <- runTest(myGOdata, algorithm = "weight01", statistic = "fisher")
-
-# p_load(gtsummary)
-
-# ##GO enerichment
-# p_load(topGO)
-# #library(data.table)
-
-# #1. get the universe of genes
-# universe=data.frame(Gene=rownames(cnt))
-# universe$Uniprot=sprot_annotations$V2[match(universe$Gene, sprot_annotations$V1)]
-# universe$Uniprot=ifelse(is.na(universe$Uniprot), trembl_annotations$V2[match(universe$Gene, trembl_annotations$V1)], as.character(universe$Uniprot))
-# universe$GO=unip_meta$Gene.ontology.IDs[match(universe$Uniprot, unip_meta$Entry)]
-# is.na(universe$GO) <- universe$GO == ""
-# universe_final=na.omit(universe[,-2])
-# write.table(universe_final, "./Input_files/GO_universe", quote = F, row.names = F, sep = "\t")
-
-# geneID2GO = readMappings(file = "Input_files/GO_universe")
-# geneUniverse <- names(geneID2GO)
-# #length(geneUniverse) #15388
-
-# #2. Define your enriched genes
-# enr1=read.table("outputs/DESeq_results.txt", header = T, row.names = 1, sep = "\t") 
-
-# #3. do the GO enrichment
-# geneList = factor(as.integer(geneUniverse %in% rownames(enr1)))
-# names(geneList) <- geneUniverse
-# myGOdata= new("topGOdata", description="My project", ontology="BP", allGenes=geneList,  annot = annFUN.gene2GO, gene2GO=geneID2GO)
-# resultFisher = runTest(myGOdata, algorithm="weight01", statistic="fisher") # in the classic algorithm hierarchy isn't taken into account, so each GO term is tested independently.To take the GO hierarchy into account, we use algorithm='weight01'. 
-
-# #adjusting p-values, using Bonferroni and FDRs (q-value)
-# allGO = usedGO(object = myGOdata)
-# allRes = GenTable(myGOdata, weightFisher = resultFisher, orderBy = "resultFisher", ranksOf = "weightFisher", topNodes = length(allGO))
-# options(scipen = 999)
-# allRes$adjusted.p = p.adjust(allRes$weightFisher, method = "bonferroni", n = length(allRes$weightFisher))
-# allRes$q.value= p.adjust(allRes$weightFisher, method = "fdr", n = length(allRes$weightFisher))
-# write.table(allRes, "TopGO_BP.txt", row.names = FALSE, sep = "\t", quote = FALSE)
-
-browseURL("http://localhost:8787")
-allRes %>%
-  tbl_summary() %>% 
-  gt::gtsave("output.png")
-  # add_overall() %>%
-  # add_p() #%>%
-  #add_stat_label()
+# browseURL("http://localhost:8787")
+# allRes %>%
+#   tbl_summary() %>% 
+#   gt::gtsave("output.png")
+#   # add_overall() %>%
+#   # add_p() #%>%
+#   #add_stat_label()
