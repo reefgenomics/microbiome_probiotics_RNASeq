@@ -1,6 +1,6 @@
 # Reference Genome Information
 
-The reference genome used is Pocillopora verrucosa [(ASM3666991v2)](https://www.ncbi.nlm.nih.gov/datasets/genome/GCF_036669915.1/). For more detailed information, please refer to the publication, [Genome-Wide Analysis of Cell Cycle-Regulating Genes in the Symbiotic Dinoflagellate Breviolum minutum](https://pubmed.ncbi.nlm.nih.gov/31551286/).
+The reference genome used is Pocillopora verrucosa [(ASM3666991v2)](https://www.ncbi.nlm.nih.gov/datasets/genome/GCF_036669915.1/).
 
 File availability at:
 [NCBI genome](https://www.ncbi.nlm.nih.gov/datasets/genome/GCF_036669915.1/)
