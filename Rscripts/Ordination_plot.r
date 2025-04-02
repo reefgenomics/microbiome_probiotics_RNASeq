@@ -26,7 +26,7 @@ tx2gene <- read_tsv("/home/colinl/Proj/microbiome_probiotics_RNASeq/results/star
 # Handle improperly formatted pseudogenes
 tx2gene <- tx2gene %>%
   mutate(gene_id = ifelse(grepl("agat-pseudogene-", gene_id), transcript_id, gene_id),
-     transcript_id = ifelse(grepl("agat-pseudogene-", gene_name), gene_name, transcript_id))
+      transcript_id = ifelse(grepl("agat-pseudogene-", gene_name), gene_name, transcript_id))
 
 # Remove "gene-" prefix from gene IDs
 tx2gene$gene_id <- sub("gene-", "", tx2gene$gene_id)
