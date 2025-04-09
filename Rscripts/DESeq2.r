@@ -62,6 +62,11 @@ metadata$timepoint <- as.factor(metadata$timepoint)
 metadata$treatment <- as.factor(metadata$treatment)
 metadata$colony <- as.factor(metadata$colony) # colony will not be used as factor in the design formula for DEseq2 but it is useful for the metadata
 
+# merge counts with all annotation to export
+counts_annotated <- merge(counts, all_annotations, by.x = "row.names", by.y = "Symbol", all.x = TRUE)
+colnames(counts_annotated)[1] <- "Symbol"
+# write counts to file
+write.table(counts_annotated, paste(out_dir, "/summary/DEgenes/DESeq_counts_annotated.tsv", sep = ""), row.names = F, quote = F, sep = "\t")
 
 # quick funcitons to print and save the number of DE genes
 echo_message <- function(comp_title, Cn_res) {
@@ -89,6 +94,8 @@ dds_counts_to_df <- function(comp_title, Cn_res) {
                 Down_regulated = nrow(subset(Cn_res, log2FoldChange < 0))
         )
 }
+
+
 
 # # Example usage
 # dds_counts_to_df(comp_title, Cn_res)
