@@ -14,3 +14,4 @@ results/*
 work/*
 !work/README.md
 results_backup.tar.gz
+Rscripts/experimental_work
