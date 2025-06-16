@@ -29,11 +29,11 @@
 
 # R script logic
 
-- DESeq2.r: Main DESeq comparisons. Relies on nf-core/rnaseq, Output in [deseq2_R](results/deseq2_R)
-- Ordination_plot.r: Main visualization. Relies on [DESeq2.r](Rscripts/DESeq2.r). Output in [deseq2_R/plot](results/deseq2_R/plots)
-- Heatmap.r: Main visualization. Relies on [nf-core/rnaseq](https://github.com/nf-core/rnaseq/). Output in [deseq2_R/plot](results/deseq2_R/heatmap)
+- DESeq2.r: Main DESeq comparisons. Relies on nf-core/rnaseq, Output in [deseq2_R](results/README.md)
+- Ordination_plot.r: Main visualization. Relies on [DESeq2.r](Rscripts/DESeq2.r). Output in [deseq2_R/plot](results/README.md)
+- Heatmap.r: Main visualization. Relies on [nf-core/rnaseq](https://github.com/nf-core/rnaseq/). Output in [deseq2_R/plot](results/README.md)
 - spawning_GO_enrichment.R: enrichment analysis. Relies on [DESeq2.r](Rscripts/DESeq2.r).
-- Permanova.r: PERMANOVA analysis. Relies on [DESeq2.r](Rscripts/DESeq2.r). Output in [deseq2_R/permanova_results](results/deseq2_R/permanova_results)
+- Permanova.r: PERMANOVA analysis. Relies on [DESeq2.r](Rscripts/DESeq2.r). Output in [deseq2_R/permanova_results](results/README.md)
 
 ## References
 
