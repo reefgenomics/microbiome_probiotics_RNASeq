@@ -51,10 +51,10 @@ dist_mat <- dist(t(vsd_mat))
 # Since samples from the same colony may not be independent, it's sensible to use colony as a strata (blocking factor).
 # This controls for the non-independence of samples from the same colony.
 perm_control <- with(metadata, how(
-  within = Within(type = "series"),   # preserves order of timepoints sequence
-  plots  = Plots(strata = colony),    # treats each colony as a ‘plot’ of repeated measures
-  blocks = colony,                    # no swaps between different colonies
-  nperm  = 99999
+    within = Within(type = "series"),   # preserves order of timepoints sequence
+    plots  = Plots(strata = colony),    # treats each colony as a ‘plot’ of repeated measures
+    blocks = colony,                    # no swaps between different colonies
+    nperm  = 99999
 ))
 
 # set.seed(123) # only for reproducibility
@@ -93,6 +93,180 @@ out_file_pairwise <- paste0(out_dir, "pairwise_permanova_results.txt")
 cat("Pairwise PERMANOVA Results:\n", file = out_file_pairwise)
 capture.output(print(results_pairwise), file = out_file_pairwise, append = TRUE)
 
+### run pairwise adonis2 for with blocks ###
+## loop though each treatment pair and timepoint
+tpair <- combn(levels(metadata$treatment), 2, simplify = FALSE)
+for (i in tpair) {
+    meta_tpair <- metadata[metadata$treatment %in% i, ]
+    print(i)
+
+    #Pairwise Permanova for each timepoint
+    for (tp in unique(meta_tpair$timepoint)) {
+        # Subset metadata for the current timepoint
+        meta_tp <- meta_tpair[meta_tpair$timepoint == tp, ]
+        
+        # Subset distance matrix for the current timepoint
+        vsd_mat_tp <- vsd_mat[, rownames(meta_tp)]
+        dist_mat_tp <- dist(t(vsd_mat_tp))
+        
+        perm_control <- with(meta_tp, how(
+        within = Within(type = "series"), # preserves order of timepoints sequence
+        plots  = Plots(strata = colony),    # treats each colony as a ‘plot’ of repeated measures
+        blocks = colony,                    # no swaps between different colonies
+        nperm  = 999999
+        ))
+
+        # set.seed(123) # only for reproducibility
+        pairwise_adonis_result_tp <- adonis2(
+                    dist_mat_tp ~ treatment,
+                    data = meta_tp,
+                    permutations = perm_control,
+                    by = "margin"
+        )
+
+        print(paste("Results for", i[1], "vs", i[2], "timepoint", tp))
+        print(pairwise_adonis_result_tp)
+
+    # Save the adonis results to a text file
+    out_file <- paste0(out_dir, i[1], "v", i[2], "_permanova_results.txt")
+
+    cat(paste("Results for", i[1], "vs", i[2], "timepoint", tp, ":\n"), file = out_file, append = TRUE)
+    capture.output(print(pairwise_adonis_result_tp), file = out_file, append = TRUE)
+    cat("\n", file = out_file, append = TRUE)
+    }
+}
+
+### -- invert loop --- ### 
+## loop though each timepoint pair and treatment
+tpair <- combn(levels(metadata$timepoint), 2, simplify = FALSE)
+for (i in tpair) {
+    meta_tpair <- metadata[metadata$timepoint %in% i, ]
+    print(i)
+
+    for (tp in unique(meta_tpair$treatment)) {
+    #Pairwise Permanova for each timepoint
+        # Subset metadata for the current timepoint
+        meta_tp <- meta_tpair[meta_tpair$treatment == tp, ]
+        
+        # Subset distance matrix for the current timepoint
+        vsd_mat_tp <- vsd_mat[, rownames(meta_tp)]
+        dist_mat_tp <- dist(t(vsd_mat_tp))
+        
+        perm_control <- with(meta_tp, how(
+        within = Within(type = "series"), # preserves order of timepoints sequence
+        plots  = Plots(strata = colony),    # treats each colony as a ‘plot’ of repeated measures
+        blocks = colony,                    # no swaps between different colonies
+        nperm  = 99999
+        ))
+
+        # set.seed(123) # only for reproducibility
+        pairwise_adonis_result_tp <- adonis2(
+                    dist_mat_tp ~ timepoint,
+                    data = meta_tp,
+                    permutations = perm_control,
+                    by = "margin"
+        )
+
+        print(paste("Results for", i[1], "vs", i[2], "treatment", tp))
+        print(pairwise_adonis_result_tp)
+
+    # Save the adonis results to a text file
+    out_file <- paste0(out_dir, i[1], "v", i[2], "_permanova_results.txt")
+
+    cat(paste("Results for", i[1], "vs", i[2], "treatment", tp, ":\n"), file = out_file, append = TRUE)
+    capture.output(print(pairwise_adonis_result_tp), file = out_file, append = TRUE)
+    cat("\n", file = out_file, append = TRUE)
+    }
+}
+
+
+### run pairwise adonis2 for without blocks ###
+out_dir <- "/home/colinl/Proj/microbiome_probiotics_RNASeq/results/deseq2_R/permanova_results_no_blocks/joined-matrix/"
+## loop though each treatment pair and timepoint
+tpair <- combn(levels(metadata$treatment), 2, simplify = FALSE)
+for (i in tpair) {
+    meta_tpair <- metadata[metadata$treatment %in% i, ]
+    print(i)
+
+    #Pairwise Permanova for each timepoint
+    for (tp in unique(meta_tpair$timepoint)) {
+        # Subset metadata for the current timepoint
+        meta_tp <- meta_tpair[meta_tpair$timepoint == tp, ]
+        
+        # Subset distance matrix for the current timepoint
+        vsd_mat_tp <- vsd_mat[, rownames(meta_tp)]
+        dist_mat_tp <- dist(t(vsd_mat_tp))
+        
+        perm_control <- with(meta_tp, how(
+        # within = Within(type = "series"), # preserves order of timepoints sequence
+        # plots  = Plots(strata = colony),    # treats each colony as a ‘plot’ of repeated measures
+        blocks = colony,                    # no swaps between different colonies
+        nperm  = 999999
+        ))
+
+        # set.seed(123) # only for reproducibility
+        pairwise_adonis_result_tp <- adonis2(
+                    dist_mat_tp ~ treatment,
+                    data = meta_tp,
+                    permutations = perm_control,
+                    by = "margin"
+        )
+
+        print(paste("Results for", i[1], "vs", i[2], "timepoint", tp))
+        print(pairwise_adonis_result_tp)
+
+    # Save the adonis results to a text file
+    out_file <- paste0(out_dir, i[1], "v", i[2], "_permanova_results.txt")
+
+    cat(paste("Results for", i[1], "vs", i[2], "timepoint", tp, ":\n"), file = out_file, append = TRUE)
+    capture.output(print(pairwise_adonis_result_tp), file = out_file, append = TRUE)
+    cat("\n", file = out_file, append = TRUE)
+    }
+}
+
+### -- invert loop --- ###
+## loop though each timepoint pair and treatment 
+tpair <- combn(levels(metadata$timepoint), 2, simplify = FALSE)
+
+for (i in tpair) {
+    meta_tpair <- metadata[metadata$timepoint %in% i, ]
+    print(i)
+
+    for (tp in unique(meta_tpair$treatment)) {
+    #Pairwise Permanova for each timepoint
+        # Subset metadata for the current timepoint
+        meta_tp <- meta_tpair[meta_tpair$treatment == tp, ]
+        
+        # Subset distance matrix for the current timepoint
+        vsd_mat_tp <- vsd_mat[, rownames(meta_tp)]
+        dist_mat_tp <- dist(t(vsd_mat_tp))
+        
+        perm_control <- with(meta_tp, how(
+        # within = Within(type = "series"), # preserves order of timepoints sequence
+        # plots  = Plots(strata = colony),    # treats each colony as a ‘plot’ of repeated measures
+        # blocks = colony,                    # no swaps between different colonies
+        nperm  = 99999
+        ))
+
+        # set.seed(123) # only for reproducibility
+        pairwise_adonis_result_tp <- adonis2(
+                    dist_mat_tp ~ timepoint,
+                    data = meta_tp,
+                    permutations = perm_control,
+                    by = "margin"
+        )
+
+        print(paste("Results for", i[1], "vs", i[2], "treatment", tp))
+        print(pairwise_adonis_result_tp)
+
+    # Save the adonis results to a text file
+    out_file <- paste0(out_dir, i[1], "v", i[2], "_permanova_results.txt")
+
+    cat(paste("Results for", i[1], "vs", i[2], "treatment", tp, ":\n"), file = out_file, append = TRUE)
+    capture.output(print(pairwise_adonis_result_tp), file = out_file, append = TRUE)
+    cat("\n", file = out_file, append = TRUE)
+    }
+}
 
 # Clean up object_list to remove objects with only one time point and 2 treatments.
 # This is a filter to exclude objects that would be blocked by strata in the adonis test. # activate if you want to filter out objects with low number of permutations. 
@@ -144,5 +318,5 @@ for (i in c(2:length(object_list_cut))) {
 
     cat(paste("comparison", comp_name, ":\n"), file = out_file, append = TRUE)
     capture.output(print(result), file = out_file, append = TRUE)
-    cat(":\n", file = out_file, append = TRUE)
+    cat("\n", file = out_file, append = TRUE)
 }
